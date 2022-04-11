@@ -15,6 +15,7 @@ public class FinalProject {
 	private static DirectedEdge[] edges;
 	private static EdgeWeightedDigraph graph;
 	private static String[] timeArray;
+	private static times[] timetable;
 	private static final String stopsTXT = "stops.txt";
 	private static final String stop_timesTXT = "stop_times.txt";
 	private static final String transfersTXT = "transfers.txt";
@@ -22,7 +23,8 @@ public class FinalProject {
 	
 	public static void main(String[] args) {
 		busStopInfo();
-		
+		routeBetween();
+		busesOnTime();
 		
 	}
 	
@@ -65,7 +67,8 @@ public class FinalProject {
 					System.out.println("Couldn't set data of the stops. Error message: " + e);
 			}
 			
-			boolean exit = false;
+      boolean exit = false;
+
 			TST<Integer> tst = new TST<Integer>();
 			for(stop i : stops) {
 				String name[] = i.getName().split(" ");
@@ -86,9 +89,11 @@ public class FinalProject {
 				tst.put(key, id);
 			}
 
+			boolean exit = false;
 			stop.sortStops(stops);
+			System.out.println("Get information of the bus stops by entering its name.");
 			while(!exit) {
-				System.out.println("Get information of the bus stops by entering its name.\nPlease enter stop name (or type \"exit\" to stop): ");
+				System.out.println("Please enter stop name (or type \"exit\" to stop): ");
 				String inSearch = scanner.nextLine();
 				if(inSearch.equalsIgnoreCase("exit")) {
 					exit = true;
@@ -167,9 +172,10 @@ public class FinalProject {
 				graph.addEdge(edges[i]);
 			
 			boolean exit = false;
+			System.out.println("Get information about the shortest route between stops.");
 			while(!exit) {
 				int from = -1, to = -1;
-				System.out.println("Get information about the shortest route between stops.\nPlease enter the departure stop ID (or enter \"exit\"): ");
+				System.out.println("Please enter the departure stop ID (or enter \"exit\"): ");
 				String input = scanner.nextLine();
 				while(input.contains(" ")) {
 					System.out.println("Please enter a valid ID or the word exit!");
@@ -221,6 +227,52 @@ public class FinalProject {
 					System.out.println("There's no route between " + from +" and " + to);
 			}
 			
+		}
+	}
+	
+	
+	public static void busesOnTime() {
+		try {
+			timetable = new times[timeArray.length];
+			for(int i=0; i<timeArray.length; i++) {
+				String[] data = timeArray[i].split(",");
+				int counter = 0;
+				int trip = Integer.parseInt(data[counter++]);
+				String arr = data[counter++];
+				if(!times.validTime(arr))
+					arr = null;
+				String depart = data[counter++];
+				if(!times.validTime(depart))
+					depart = null;
+				int stop = Integer.parseInt(data[counter++]);
+				int rank = Integer.parseInt(data[counter++]);
+				timetable[i] = new times(trip, arr, depart, stop, rank);
+			}
+		}
+		catch(Exception e) {
+			System.out.println(e);
+		}
+		
+		boolean exit = false;
+		System.out.println("Get the aviable buses before a given time.");
+		while(!exit) {
+			System.out.println("Please enter time(hh:mm:ss) (or type \"exit\"):");
+			String input = scanner.nextLine();
+			int counter = 0;
+			if(input.equalsIgnoreCase("exit"))
+				exit = true;
+			else if(!times.validTime(input))
+				System.out.println("It's not a valid time or the word exit!");
+			else
+				for(times i : timetable) {
+					if(i.getArrival() != null)
+						if(i.getArrival().trim().equalsIgnoreCase(input.trim())) {
+							i.displayInfo();
+							counter++;
+						}
+				}
+			if(counter == 0)
+				System.out.println("There's no bus arrival @ that time.\n");
 		}
 	}
 	
