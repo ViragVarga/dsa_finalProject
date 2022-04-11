@@ -67,8 +67,6 @@ public class FinalProject {
 					System.out.println("Couldn't set data of the stops. Error message: " + e);
 			}
 			
-      boolean exit = false;
-
 			TST<Integer> tst = new TST<Integer>();
 			for(stop i : stops) {
 				String name[] = i.getName().split(" ");
