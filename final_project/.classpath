@@ -6,10 +6,6 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/Virag Varga/OneDrive - IES-HU KFT/Virag/Trinity/Year_2/Algorithm &amp; Data structure/algs4.jar">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/Virag Varga/OneDrive - IES-HU KFT/Virag/Trinity/Year_2/Algorithm &amp; Data structure/algs4.jar"/>
 	<classpathentry kind="output" path=""/>
 </classpath>
