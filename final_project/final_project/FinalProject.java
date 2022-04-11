@@ -9,21 +9,17 @@ import edu.princeton.cs.algs4.*;
 
 public class FinalProject {
 	
-	private static String[] stopArray;
 	private static stop[] stops;
-	private static String[] edgeArray;
-	private static DirectedEdge[] edges;
 	private static EdgeWeightedDigraph graph;
 	private static String[] timeArray;
-	private static times[] timetable;
 	private static final String stopsTXT = "stops.txt";
 	private static final String stop_timesTXT = "stop_times.txt";
 	private static final String transfersTXT = "transfers.txt";
 	static Scanner scanner = new Scanner(System.in);
 	
 	public static void main(String[] args) {
-		busStopInfo();
 		routeBetween();
+		busStopInfo();
 		busesOnTime();
 		
 	}
@@ -32,7 +28,7 @@ public class FinalProject {
 		ArrayList<String> stopLines = fileReader(stopsTXT);
 		
 		if(stopLines != null) {
-			stopArray = new String[stopLines.size()-1];
+			String[] stopArray = new String[stopLines.size()-1];
 			for(int i=1; i<stopLines.size(); i++) {
 				stopArray[i-1] = stopLines.get(i);
 			}
@@ -96,6 +92,9 @@ public class FinalProject {
 				if(inSearch.equalsIgnoreCase("exit")) {
 					exit = true;
 				}
+				else if(inSearch.equalsIgnoreCase(" ") || inSearch.equalsIgnoreCase("") || inSearch.equals(null)) {
+					System.out.println("Invalid input!");
+				}
 				else {
 					Iterable<String> searchRes = tst.keysWithPrefix(inSearch.toUpperCase());
 					for(String i : searchRes) {
@@ -114,14 +113,14 @@ public class FinalProject {
 		ArrayList<String> timeLines = fileReader(stop_timesTXT);
 		
 		if(edgeLines != null || timeLines != null) {
-			edgeArray = new String[edgeLines.size()-1];
+			String[] edgeArray = new String[edgeLines.size()-1];
 			timeArray = new String[timeLines.size()-1];
 			for(int i=1; i<edgeLines.size(); i++)
 				edgeArray[i-1] = edgeLines.get(i);
 			for(int i=1; i<timeLines.size(); i++)
 				timeArray[i-1] = timeLines.get(i);
 			
-			edges = new DirectedEdge[edgeArray.length + timeArray.length];
+			DirectedEdge[] edges = new DirectedEdge[edgeArray.length + timeArray.length];
 			int numEdges = 0;
 			
 			try {
@@ -230,6 +229,8 @@ public class FinalProject {
 	
 	
 	public static void busesOnTime() {
+		times[] timetable = null;
+		boolean readIn = false;
 		try {
 			timetable = new times[timeArray.length];
 			for(int i=0; i<timeArray.length; i++) {
@@ -246,31 +247,33 @@ public class FinalProject {
 				int rank = Integer.parseInt(data[counter++]);
 				timetable[i] = new times(trip, arr, depart, stop, rank);
 			}
+			readIn = true;
 		}
 		catch(Exception e) {
 			System.out.println(e);
 		}
-		
-		boolean exit = false;
-		System.out.println("Get the aviable buses before a given time.");
-		while(!exit) {
-			System.out.println("Please enter time(hh:mm:ss) (or type \"exit\"):");
-			String input = scanner.nextLine();
-			int counter = 0;
-			if(input.equalsIgnoreCase("exit"))
-				exit = true;
-			else if(!times.validTime(input))
-				System.out.println("It's not a valid time or the word exit!");
-			else
-				for(times i : timetable) {
-					if(i.getArrival() != null)
-						if(i.getArrival().trim().equalsIgnoreCase(input.trim())) {
-							i.displayInfo();
-							counter++;
-						}
-				}
-			if(counter == 0)
-				System.out.println("There's no bus arrival @ that time.\n");
+		if(readIn) {
+			boolean exit = false;
+			System.out.println("Get the aviable buses arriving at a given time.");
+			while(!exit) {
+				System.out.println("Please enter time(hh:mm:ss) (or type \"exit\"):");
+				String input = scanner.nextLine();
+				int counter = 0;
+				if(input.equalsIgnoreCase("exit"))
+					exit = true;
+				else if(!times.validTime(input))
+					System.out.println("It's not a valid time or the word exit!");
+				else
+					for(times i : timetable) {
+						if(i.getArrival() != null)
+							if(i.getArrival().trim().equalsIgnoreCase(input.trim())) {
+								i.displayInfo();
+								counter++;
+							}
+					}
+				if(counter == 0 && exit == false && times.validTime(input))
+					System.out.println("There's no bus arrival @ that time.\n");
+			}
 		}
 	}
 	
